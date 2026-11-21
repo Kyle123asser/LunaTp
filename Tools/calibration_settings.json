@@ -1,0 +1,152 @@
+{
+  "base": {
+    "name": "Amber Nasal",
+    "engine": "formant",
+    "attack_s": 0.019,
+    "bloom_s": 0.036,
+    "accent": 0.1,
+    "accent_s": 0.055,
+    "release_s": 0.145,
+    "pressure_flutter": 0.005,
+    "cutoff_hz": 4550,
+    "cutoff_keytrack": 0.27,
+    "body_floor": 0.3,
+    "formants": [
+      [
+        1040,
+        0.42,
+        1.25
+      ],
+      [
+        1820,
+        0.35,
+        0.95
+      ],
+      [
+        3250,
+        0.48,
+        0.35
+      ]
+    ],
+    "formant_keytrack": 0.14,
+    "formant_motion": 0.08,
+    "odd_bias": 0.16,
+    "fundamental": 1.2,
+    "partial_bloom_s": 0.0026,
+    "spectral_release_scale": 0.68,
+    "vibrato_cents": 18,
+    "vibrato_hz": 5.6,
+    "vibrato_delay_s": 0.22,
+    "onset_settle_cents": 14,
+    "drift_cents": 1.1,
+    "breath_sustain": 0.0011,
+    "tongue_noise": 0.011,
+    "tongue_s": 0.023
+  },
+  "beta11": {
+    "parameter_overrides": {
+      "cutoff_hz": 5200,
+      "partial_bloom_s": 0.0018,
+      "formants": [
+        [
+          1040,
+          0.42,
+          1.25
+        ],
+        [
+          1820,
+          0.35,
+          0.95
+        ],
+        [
+          3250,
+          0.48,
+          0.42
+        ]
+      ]
+    },
+    "sustain_modulation": {
+      "delay_s": 0.08,
+      "fade_in_s": 0.12,
+      "rate_hz": 1.35,
+      "amplitude_depth": 0.028,
+      "secondary_rate_hz": 3.15,
+      "secondary_depth": 0.009,
+      "pressure_depth": 0.008
+    },
+    "release_brightness": {
+      "return_s": 0.025,
+      "remaining_fraction": 0.15
+    }
+  },
+  "register": {
+    "register": {
+      "start_midi": 60,
+      "full_midi": 90,
+      "maximum_partial_gain_db": 12,
+      "high_partial_start": 5,
+      "high_partial_full": 8,
+      "taper_start_hz": 12000,
+      "taper_end_hz": 18000
+    }
+  },
+  "contrast": {
+    "register_map": {
+      "low_midi": 48,
+      "neutral_midi": 71,
+      "high_midi": 95
+    },
+    "low_mid_harmonics": {
+      "center_partial": 5.0,
+      "width_partials": 2.0,
+      "max_extra_db": 6.0
+    },
+    "high_harmonics": {
+      "center_partial": 4.5,
+      "width_partials": 1.6,
+      "max_extra_db": 6.0
+    }
+  },
+  "attack": {
+    "resonance_centers_hz": [
+      2400,
+      3400
+    ],
+    "resonance_widths_octaves": [
+      0.3,
+      0.28
+    ],
+    "resonance_weights": [
+      0.65,
+      0.55
+    ],
+    "resonance_db": 4.5,
+    "high_partials_db": 2.5,
+    "maximum_combined_db": 7.0,
+    "harmonic_peaks_db": {
+      "3": 2.0,
+      "5": 3.5,
+      "7": 2.5
+    },
+    "end_ms": 110
+  },
+  "flutter": {
+    "primary_low_anchor_midi": 71,
+    "primary_low_anchor_hz": 3.0,
+    "primary_high_anchor_midi": 95,
+    "primary_high_anchor_hz": 7.5,
+    "below_anchor_floor_hz": 0.35,
+    "below_anchor_rolloff_semitones": 24,
+    "secondary_rate_ratio": 1.5,
+    "primary_max_attenuation": 0.3333333333333333,
+    "secondary_max_attenuation": 0.16666666666666666,
+    "depth_low_midi": 48,
+    "depth_high_midi": 84,
+    "high_register_depth_scale": 0.65
+  },
+  "rate_ramp": {
+    "tail_flutter_rate_max_multiplier": 2.0,
+    "tail_flutter_rate_ramp_s": 1.1,
+    "depth_fade_in_ms": 5
+  }
+}

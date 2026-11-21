@@ -1,0 +1,23 @@
+version = 1
+
+[[annotations]]
+path = [
+    ".gitattributes",
+    ".gitignore",
+    "CMakeLists.txt",
+    "build.ps1",
+    "test.ps1",
+    "Source/**",
+    "Tests/**",
+    "Tools/**",
+    "Docs/**",
+    "README.md",
+    "README_zh-TW.md",
+    "CHANGELOG.md",
+    "COPYRIGHT.md",
+    "SOURCE_DISTRIBUTION.md",
+    "THIRD_PARTY_LICENSES.md",
+]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 AAAA_Geen"
+SPDX-License-Identifier = "AGPL-3.0-only"
