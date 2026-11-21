@@ -2,6 +2,7 @@
 
 ## Alpha V0.2.1
 
+- Adds an About view with copyright, no-warranty and AGPLv3 notices, plus links to the source repository and complete license.
 - Adds the GNU AGPLv3 text and AGPL-3.0-only SPDX attribution metadata. Records the public copyright credit as AAAA_Geen.
 
 - Preserves the original V0.2.1 instrument code, plugin and parameter IDs, defaults, and analytical coefficients.

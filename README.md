@@ -17,6 +17,8 @@ Windows x64 is the build target. FL Studio was previously used with Alpha V0.2. 
 
 ## Controls
 
+Select **About** in the title bar to view the copyright, AGPLv3 terms, and repository links. Select **Close** or press **Esc** to return to the controls. [About build verification](Docs/AGPLv3_GUI_REPORT_zh-TW.md)
+
 | Control | Behavior |
 | --- | --- |
 | Voice Mode | Mono by default. Poly allows up to eight active notes and uses voice stealing when full. |

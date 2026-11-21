@@ -2,6 +2,8 @@
 #include "LunaCore.h"
 #include "InterfaceText.h"
 #include <atomic>
+#include <functional>
+#include <utility>
 
 class LunaProcessor final : public juce::AudioProcessor {
 public:
@@ -98,7 +100,13 @@ public:
 
 class LunaLook final : public juce::LookAndFeel_V4 {
 public:
-    juce::Font getLabelFont(juce::Label& label) override{return label.getComponentID()=="gain_warning"?LunaText::font(16).boldened():LunaText::font(16);}
+    juce::Font getLabelFont(juce::Label& label) override {
+        if (label.getComponentID() == "about_name")
+            return LunaText::font(23).boldened();
+        if (label.getComponentID() == "gain_warning")
+            return LunaText::font(16).boldened();
+        return LunaText::font(16);
+    }
     juce::Font getComboBoxFont(juce::ComboBox&) override{return LunaText::font(16);}
     juce::Font getPopupMenuFont() override{return LunaText::font(16);}
     juce::Rectangle<int> getTooltipBounds(const juce::String&,juce::Point<int> position,juce::Rectangle<int> parent) override {
@@ -109,6 +117,85 @@ public:
         g.drawFittedText(s,8,6,w-16,h-12,juce::Justification::centredLeft,4,1.f);
     }
 };
+class LunaAboutPanel final : public juce::Component {
+public:
+    explicit LunaAboutPanel(std::function<void()> onClose) {
+        setComponentID("about_panel");
+        setFocusContainerType(juce::Component::FocusContainerType::focusContainer);
+        setTitle("Luna Tp license information");
+
+        heading.setText("Luna Tp", juce::dontSendNotification);
+        heading.setComponentID("about_name");
+        version.setText("Alpha V0.2.1", juce::dontSendNotification);
+        version.setComponentID("about_version");
+        notice.setText(juce::String::fromUTF8(
+            u8"Copyright © 2026 AAAA_Geen\n"
+            "Licensed under GNU AGPL-3.0-only.\n"
+            "This software comes without warranty.\n"
+            "You may redistribute and modify this software under the terms of the GNU AGPLv3."
+        ), juce::dontSendNotification);
+        notice.setComponentID("about_notice");
+        for (auto* label : {&heading, &version, &notice}) {
+            label->setColour(juce::Label::textColourId, juce::Colours::white);
+            label->setJustificationType(juce::Justification::centredLeft);
+            addAndMakeVisible(label);
+        }
+        notice.setJustificationType(juce::Justification::topLeft);
+
+        repository.setComponentID("about_repository");
+        repository.setTooltip("Open the Luna Tp source repository on GitHub");
+        license.setComponentID("about_license");
+        license.setTooltip("Read the complete GNU AGPLv3 license on GitHub");
+        for (auto* link : {&repository, &license}) {
+            link->setColour(juce::HyperlinkButton::textColourId, juce::Colour(0xffa8d0ff));
+            link->setFont(LunaText::font(16), false, juce::Justification::centredLeft);
+            addAndMakeVisible(link);
+        }
+        close.setComponentID("about_close");
+        close.onClick = std::move(onClose);
+        addAndMakeVisible(close);
+    }
+
+    void focusCloseButton() {
+        if (isShowing())
+            close.grabKeyboardFocus();
+    }
+
+    bool keyPressed(const juce::KeyPress& key) override {
+        if (key.getKeyCode() != juce::KeyPress::escapeKey)
+            return false;
+        close.onClick();
+        return true;
+    }
+
+    void paint(juce::Graphics& g) override {
+        auto bounds = getLocalBounds().toFloat().reduced(0.5f);
+        g.setColour(juce::Colour(0xff292e39));
+        g.fillRoundedRectangle(bounds, 6.f);
+        g.setColour(juce::Colour(0xff565f70));
+        g.drawRoundedRectangle(bounds, 6.f, 1.f);
+    }
+
+    void resized() override {
+        auto body = getLocalBounds().reduced(24);
+        heading.setBounds(body.removeFromTop(32));
+        version.setBounds(body.removeFromTop(26));
+        body.removeFromTop(16);
+        notice.setBounds(body.removeFromTop(104));
+        body.removeFromTop(12);
+        auto links = body.removeFromTop(32);
+        repository.setBounds(links.removeFromLeft(142).reduced(4, 0));
+        license.setBounds(links.removeFromLeft(120).reduced(4, 0));
+        close.setBounds(body.removeFromBottom(32).removeFromRight(108));
+    }
+
+private:
+    juce::Label heading, version, notice;
+    juce::HyperlinkButton repository{"Repository", juce::URL("https://github.com/Kyle123asser/LunaTp")};
+    juce::HyperlinkButton license{"License", juce::URL("https://github.com/Kyle123asser/LunaTp/blob/main/LICENSE")};
+    juce::TextButton close{"Close"};
+};
+
 class LunaEditor final : public juce::AudioProcessorEditor,private juce::Timer {
     using SliderAttachment=juce::AudioProcessorValueTreeState::SliderAttachment;
     using ButtonAttachment=juce::AudioProcessorValueTreeState::ButtonAttachment;
@@ -128,6 +215,11 @@ public:
         }
         velocity.setTextValueSuffix(" %");polyGain.setTextValueSuffix(" %");
         addAndMakeVisible(legato);addAndMakeVisible(glide);
+        aboutButton.setComponentID("about_button");
+        aboutButton.setTooltip("View copyright, license and source information");
+        aboutButton.onClick = [this] { showAbout(!aboutPanel.isVisible()); };
+        addAndMakeVisible(aboutButton);
+        addChildComponent(aboutPanel);
         const char* controlIDs[9]={"voice_mode","poly_voice_gain","velocity_timbre_amount","legato_enabled","glide_enabled","glide_time_ms","glide_mode","pitch_bend_range","harmonic_texture_level"};
         juce::Component* namedControls[9]={&mode,&polyGain,&velocity,&legato,&glide,&time,&glideMode,&bendRange,&texture};
         for(int i=0;i<9;++i){namedControls[i]->setComponentID(controlIDs[i]);labels[i].setComponentID("label_"+juce::String(controlIDs[i]));}
@@ -180,16 +272,36 @@ public:
     }
     void paint(juce::Graphics& g) override {
         g.fillAll(juce::Colour(0xff20232b));g.setColour(juce::Colours::white);g.setFont(LunaText::font(23));
-        g.drawText("Luna Tp | Alpha V0.2.1",18,12,410,32,juce::Justification::centredLeft);
-        g.setColour(juce::Colour(0xff8a6132));g.drawRoundedRectangle(18.f,518.f,722.f,90.f,5.f,1.f);
+        g.drawText("Luna Tp | Alpha V0.2.1",18,12,300,32,juce::Justification::centredLeft);
+        if (!aboutPanel.isVisible()) {
+            g.setColour(juce::Colour(0xff8a6132));
+            g.drawRoundedRectangle(18.f,518.f,722.f,90.f,5.f,1.f);
+        }
     }
     void resized() override {
+        aboutButton.setBounds(326, 14, 96, 30);
+        aboutPanel.setBounds(18, 62, 724, 378);
         languageLabel.setBounds(430,14,110,30);language.setBounds(550,14,190,30);status.setBounds(18,56,722,28);
         juce::Component* controls[9]={&mode,&polyGain,&velocity,&legato,&glide,&time,&glideMode,&bendRange,&texture};
         for(int i=0;i<9;++i){int y=104+i*44;labels[i].setBounds(18,y,250,30);controls[i]->setBounds(280,y,460,30);}
         warning.setBounds(28,526,702,74);hint.setBounds(18,614,722,26);
     }
 private:
+    void showAbout(bool open) {
+        for (auto& label : labels)
+            label.setVisible(!open);
+        juce::Component* controls[] = {&mode, &polyGain, &velocity, &legato, &glide, &time,
+                                      &glideMode, &bendRange, &texture, &status, &warning, &hint};
+        for (auto* component : controls)
+            component->setVisible(!open);
+        aboutPanel.setVisible(open);
+        if (open)
+            aboutPanel.focusCloseButton();
+        else if (isShowing())
+            aboutButton.grabKeyboardFocus();
+        repaint();
+    }
+
     void timerCallback() override {if(int(processor.parameter(9))!=lang)translate(int(processor.parameter(9)));if(overloadTicks>0)--overloadTicks;refreshStatus();}
     LunaProcessor& processor;
     LunaLook look;
@@ -200,6 +312,8 @@ private:
     juce::ComboBox mode,glideMode,bendRange,texture,language;
     juce::Slider velocity,time,polyGain;
     juce::ToggleButton legato,glide;
+    juce::TextButton aboutButton{"About"};
+    LunaAboutPanel aboutPanel{[this] { showAbout(false); }};
     std::unique_ptr<SliderAttachment> velocityA,timeA,gainA;
     std::unique_ptr<ButtonAttachment> legatoA,glideA;
     std::unique_ptr<ComboAttachment> modeA,glideModeA,bendA,textureA,languageA;

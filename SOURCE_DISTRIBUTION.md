@@ -1,23 +1,28 @@
-# Corresponding source · Alpha V0.2.1
+# Corresponding source · Luna Tp Alpha V0.2.1 (About build)
 
-## Reading this from the Windows ZIP
+The Windows asset is LunaTp-Windows-x64.zip. Download LunaTp-Alpha-V0.2.1-Corresponding-Source.zip from the same GitHub Release page when published. VERSION.txt in the Windows ZIP records the binary, source ZIP, and source manifest SHA-256 values.
 
-On the same GitHub Release page that offers **LunaTp-Windows-x64.zip**, download **LunaTp-Alpha-V0.2.1-Corresponding-Source.zip**. The tagged repository for that release provides the same Luna Tp sources, scripts and data. Both downloads are intended to be available at no extra charge. The Windows ZIP's **VERSION.txt** identifies the verified source ZIP by SHA-256. The source ZIP's **SOURCE_MANIFEST.sha256** records the SHA-256 of each included repository file, with paths relative to the extracted source root.
+The source ZIP contains the 41 files in the local public source snapshot, including the About code, CMake configuration, build and test scripts, analytical data and generator, and license notices. SOURCE_MANIFEST.sha256 identifies each project file by its SHA-256. Both assets include the third-party notices. See the [build instructions](README.md#build-and-test) and [About verification](Docs/AGPLv3_GUI_REPORT_zh-TW.md).
 
-To build directly from a checkout, follow the [build instructions](README.md#build-and-test). When a binary release is published, its tag identifies the source revision used for that release.
+## Pinned dependency
 
-## Repository source and dependency
+CMake obtains the unmodified [JUCE 9.0.5 tag ZIP](https://codeload.github.com/juce-framework/JUCE/zip/refs/tags/9.0.5) and verifies its SHA-256:
 
-The source ZIP and the matching repository tag contain **Source/**, the checked-in analytical coefficients, their generation tools and settings, the tests, **CMakeLists.txt**, **build.ps1**, **test.ps1**, and the build and installation documentation. Windows builds use MSVC, a Windows SDK, Ninja, CMake and a system Visual C++ runtime as documented in the README.
+    db891ee990a5ec8b58739f24e1ac62d8abd584205256a356c414a083d8927168
 
-Luna Tp also requires the following unmodified source dependency.
+For offline builds, pass the downloaded ZIP to build.ps1 with -JuceArchive. The archive includes JUCE's build helpers and the VST 3 SDK.
 
-| Dependency | Source | Archive SHA-256 |
-| --- | --- | --- |
-| JUCE 9.0.5 | [Official tagged source ZIP](https://codeload.github.com/juce-framework/JUCE/zip/refs/tags/9.0.5) | db891ee990a5ec8b58739f24e1ac62d8abd584205256a356c414a083d8927168 |
+## Publication
 
-CMake fetches and checks this hash. For offline builds, download the exact archive once, then pass **-JuceArchive** to **build.ps1**. The archive contains the accompanying VST 3 SDK and JUCE's build helpers. Include [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md) and all of [Licenses/](Licenses/) in both Luna Tp ZIPs. Include the FreeType credit in the Windows ZIP documentation. [Pinned JUCE notices and dependency inventory](https://github.com/juce-framework/JUCE/blob/9.0.5/JUCE.spdx.json)
+| Field | Status |
+| --- | --- |
+| Repository | [Kyle123asser/LunaTp](https://github.com/Kyle123asser/LunaTp) |
+| Branch | main |
+| Release | Luna Tp Alpha V0.2.1 (Pre-release) |
+| Tag | v0.2.1-alpha (pending) |
+| Target commit | Pending the commit of the About source snapshot |
+| Current GitHub baseline | [973b5f24c4311b2b1dd5d23063ead00a0d5aa873](https://github.com/Kyle123asser/LunaTp/commit/973b5f24c4311b2b1dd5d23063ead00a0d5aa873) (pre-About) |
 
-## Publication handoff
+The title-bar About view provides copyright, no-warranty, AGPLv3 redistribution and modification rights, and links to the full license and source repository. Luna Tp project materials use AGPL-3.0-only with public credit to AAAA_Geen. See [COPYRIGHT.md](COPYRIGHT.md), [LICENSE](LICENSE) and [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md).
 
-Before making the Windows ZIP public, record the actual GitHub repository URL, tag, and commit, and bind both assets to that commit. Publish clear links to the source ZIP and exact JUCE source alongside the Windows asset. Keep equivalent, no-extra-charge access to both source downloads available for as long as the binary is distributed via this route. Verify outside the publisher's signed-in account. If the upstream JUCE download cannot satisfy continued access, arrange an authorized equivalent copy of that exact archive and verify its hash before distributing the Windows ZIP. The two local ZIPs alone do not establish public access. [GNU AGPLv3, sections 1 and 6(d)](https://www.gnu.org/licenses/agpl-3.0.en.html)
+Verify the release tag against the About source manifest before publishing. Provide equivalent public access to the matching source ZIP and pinned JUCE source at no extra charge alongside the Windows asset. [AGPLv3 sections 1 and 6(d)](LICENSE)

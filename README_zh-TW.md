@@ -15,6 +15,8 @@ Luna Tp 是 Windows x64 的原創合成銅管 VST3。這是個人興趣開發、
 
 建置目標為 Windows x64。Alpha V0.2 曾在 FL Studio 實機使用。本次重編的 V0.2.1 已在 JUCE VST3 測試主機載入與驗證。這個 V0.2.1 束件尚待 FL Studio 與其他 DAW 實測。若 DAW 回報缺少 MSVC 執行階段，可使用 Microsoft 提供的現行 x64 Visual C++ v14 Redistributable。[Microsoft 執行階段說明](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist)
 
+標題列的 **About** 提供版權、AGPLv3 授權與原始碼連結。按 **Close** 或 **Esc** 可返回操作介面。[About 版驗證紀錄](Docs/AGPLv3_GUI_REPORT_zh-TW.md)
+
 | 控制項 | 行為 |
 | --- | --- |
 | 發聲模式 | 預設 Mono 單音。Poly 同時支援至多八聲部，滿額時會替換聲部。 |

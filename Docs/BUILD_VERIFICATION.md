@@ -1,4 +1,6 @@
-# Build verification
+# Baseline build verification
+
+The following results describe the pre-About baseline. See the [About build verification](AGPLv3_GUI_REPORT_zh-TW.md) for the current Windows release candidate.
 
 The candidate was built in a fresh independent directory with MSVC 19.51.36260, Windows SDK 10.0.26100, CMake 4.4.4, Ninja 1.13.2, and Release x64 settings. The official JUCE 9.0.5 tag archive was downloaded directly and SHA-256 verified. CMake performed the clean configuration through the documented local-archive option. No original project build objects were used.
 

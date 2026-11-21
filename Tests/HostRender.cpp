@@ -109,6 +109,55 @@ int main(int argc,char** argv){try{
             int i=0;for(auto* p:local->getParameters()){auto* identified=dynamic_cast<juce::AudioProcessorParameterWithID*>(p);if(!identified||identified->paramID!="ui_language")check(p->getValue()==before[size_t(i)],"Language changed sound parameter");++i;}
             capture(lang==0?".zh-TW.png":".en.png");
         }
+        auto* about = dynamic_cast<juce::TextButton*>(localEditor->findChildWithID("about_button"));
+        auto* panel = localEditor->findChildWithID("about_panel");
+        check(about && about->isVisible() && about->getButtonText() == "About", "About button missing");
+        check(!about->getBounds().intersects(selector->getBounds()), "About overlaps language controls");
+        check(panel && !panel->isVisible(), "About should start closed");
+        std::vector<float> beforeAbout;
+        for (auto* p : local->getParameters())
+            beforeAbout.push_back(p->getValue());
+        about->onClick();
+        check(panel->isVisible(), "About did not open");
+        for (const auto* id : ids)
+            check(!localEditor->findChildWithID(id)->isVisible(), "Controls should be hidden in About view");
+        auto labelText=[&](const char* id){
+            auto* label=dynamic_cast<juce::Label*>(panel->findChildWithID(id));
+            check(label && label->isVisible(),"About label missing");
+            return label->getText();
+        };
+        check(labelText("about_name")=="Luna Tp" && labelText("about_version")=="Alpha V0.2.1", "About identity incorrect");
+        auto notice = labelText("about_notice");
+        for (const auto* expected : {u8"Copyright © 2026 AAAA_Geen", "Licensed under GNU AGPL-3.0-only.",
+             "This software comes without warranty.",
+             "You may redistribute and modify this software under the terms of the GNU AGPLv3."})
+            check(notice.contains(juce::String::fromUTF8(expected)), "Incomplete About notice");
+        for (const auto& line : juce::StringArray::fromLines(notice)) {
+            juce::GlyphArrangement glyphs;
+            glyphs.addLineOfText(LunaText::font(16), line, 0, 0);
+            check(glyphs.getBoundingBox(0, -1, true).getWidth() <
+                panel->findChildWithID("about_notice")->getWidth() - 10, "About notice truncated");
+        }
+        auto linkURL=[&](const char* id) {
+            auto* link=dynamic_cast<juce::HyperlinkButton*>(panel->findChildWithID(id));
+            check(link && link->isVisible() && link->isEnabled(),"About link unavailable");
+            return link->getURL().toString(true);
+        };
+        check(linkURL("about_repository")=="https://github.com/Kyle123asser/LunaTp", "Repository URL incorrect");
+        check(linkURL("about_license")=="https://github.com/Kyle123asser/LunaTp/blob/main/LICENSE", "License URL incorrect");
+        capture(".about.png");
+        auto* close=dynamic_cast<juce::TextButton*>(panel->findChildWithID("about_close"));
+        check(close && close->isVisible() && close->getButtonText() == "Close", "About Close missing");
+        close->onClick();
+        check(!panel->isVisible(), "Close did not dismiss About");
+        for (const auto* id : ids)
+            check(localEditor->findChildWithID(id)->isVisible(), "A control did not return");
+        about->onClick();
+        check(panel->keyPressed(juce::KeyPress(juce::KeyPress::escapeKey)) && !panel->isVisible(),
+              "Escape did not dismiss About");
+        int aboutParam = 0;
+        for (auto* p : local->getParameters())
+            check(p->getValue()==beforeAbout[size_t(aboutParam++)], "About changed a parameter");
         // Exercise the warning at an actual >0dBFS signal; no limiter is inserted.
         for(auto* p:local->getParameters())if(auto* id=dynamic_cast<juce::AudioProcessorParameterWithID*>(p);id&&id->paramID=="voice_mode")p->setValueNotifyingHost(1);
         local->prepareToPlay(48000,128);
@@ -116,6 +165,9 @@ int main(int argc,char** argv){try{
         selector->setSelectedId(1,juce::sendNotificationSync);
         auto* warning=dynamic_cast<juce::Label*>(localEditor->findChildWithID("gain_warning"));check(warning&&warning->getText().contains("0 dBFS"),"Overload warning missing");capture(".overload.png");
         auto gui=std::make_unique<juce::DynamicObject>();gui->setProperty("font",LunaText::fontFamily);gui->setProperty("checked_glyphs",glyphs);gui->setProperty("languages",2);gui->setProperty("immediate_translation",true);gui->setProperty("sound_parameters_unchanged",true);gui->setProperty("overload_warning",true);
+        gui->setProperty("about_open_close_escape",true);
+        gui->setProperty("about_legal_text_and_urls",true);
+        gui->setProperty("about_parameters_unchanged",true);
         juce::File(argv[3]).withFileExtension(".gui.json").replaceWithText(juce::JSON::toString(juce::var(gui.release()),true));
     }
     auto* events=scene["events"].getArray();check(events!=nullptr,"No events array");

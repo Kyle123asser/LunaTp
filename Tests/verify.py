@@ -124,8 +124,9 @@ def main():
     parser.add_argument("--reference", type=Path, help="Optional V0.2.1 VST3 bundle")
     parser.add_argument("--capture-gui", action="store_true", help="Check the bilingual editor and Windows font")
     args = parser.parse_args()
-    build = args.build.resolve()
-    reference = args.reference.resolve() if args.reference else None
+    # Preserve a Windows drive alias through the native test host command line.
+    build = args.build.absolute()
+    reference = args.reference.absolute() if args.reference else None
     results = verify(build, reference, args.capture_gui)
     path = build / "verification.json"
     path.write_text(json.dumps(results, indent=2) + "\n", encoding="utf-8")
